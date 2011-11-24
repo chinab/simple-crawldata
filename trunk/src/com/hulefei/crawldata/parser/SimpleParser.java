@@ -17,6 +17,7 @@ import com.hulefei.crawldata.parser.node.ImageNode;
 public class SimpleParser {
 
 	public static String UTF8 = "utf-8";
+	public static String GB2312 = "gb2312";
 	
 //	private File file;
 	private Parser parser;
