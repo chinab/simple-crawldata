@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import com.hulefei.crawldata.file.FileUtil;
+import com.hulefei.crawldata.manmankan.process.Constants;
 import com.hulefei.crawldata.util.HsqlDBUtil;
 
 public class DownloadImageThread implements Runnable {
@@ -22,26 +23,18 @@ public class DownloadImageThread implements Runnable {
 	@Override
 	public void run() {
 
-//		int count = 0;
-		while(true) {
-//			count++;
+		while (true) {
+
 			String[][] imageinfo = new String[0][0];
-			String sql = "SELECT image, rid, rorder FROM mmk_huoying_imageinfo where tag = 0 "+orderStr+" limit 1";
+			String sql = "SELECT image, rid, rorder FROM mmk_huoying_imageinfo where tag = 0 "
+					+ orderStr + " limit 1";
 			try {
-					imageinfo = db.queryFromPool(sql);
-					
-					System.out.println(sql);
-					
-//					String sql1 = "SELECT id FROM mmk_huoying_info where rid = " + imageinfo[0][1];
-//					String[][] realids = db.queryFromPool(sql1);
-//					imageinfo[0][1] = realids[0][0];
-					
-					
-					
+				imageinfo = db.queryFromPool(sql);
 				if (imageinfo.length == 0) {
-					System.err.println("length is 0");
+					System.err.println("length is 0, download images end");
 					return;
 				}
+
 			} catch (SQLException e) {
 				System.err.println(e.getMessage());
 				System.err.println(sql);
@@ -49,37 +42,44 @@ public class DownloadImageThread implements Runnable {
 
 			for (int j = 0; j < imageinfo.length; j++) {
 				String imgageurl = imageinfo[j][0];
-				String imageName = createImageName(imgageurl, Integer.valueOf(imageinfo[j][2]));
+				String imageName = createImageName(imgageurl,
+						Integer.valueOf(imageinfo[j][2]));
 				try {
+					Integer rid = Integer.valueOf(imageinfo[0][1]);
+					String sql1 = "SELECT id,title FROM mmk_huoying_info where rid = "
+							+ rid;
+					String[][] info = db.queryFromPool(sql1);
+					int id = Integer.valueOf(info[0][0]);
+					String title = info[0][1].trim();
+
+					String imageForld = id + "_" + title;
+
 					String downloadfile = FileUtil.downloadfile(imgageurl,
-							"F:/simple-crawldata/huoying/images/" + imageinfo[j][1] + "/",
+							Constants.ImagesDirPath + imageForld + "/",
 							imageName);
-					
-					System.out.println(Thread.currentThread().getName() +downloadfile + "- finished");
-					
-					String updatesql = "update mmk_huoying_imageinfo set tag = 1 where rid = " + imageinfo[j][1] + " and " + "rorder = "+ imageinfo[j][2];
-					
-					
+
+					System.out.println(Thread.currentThread().getName()
+							+ downloadfile + "- finished");
+
+					String updatesql = "update mmk_huoying_imageinfo set tag = 1 where rid = "
+							+ imageinfo[j][1]
+							+ " and "
+							+ "rorder = "
+							+ imageinfo[j][2];
+
 					db.executeUpdate(updatesql);
-					
-					
+
 				} catch (IOException e) {
 					System.out.println(e.getMessage());
 					System.out.println(imgageurl);
 				} catch (SQLException e) {
 					System.out.println(e.getMessage());
-				} catch(Exception e) {
+				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
-				
-				
-				
-			}
-			
 			}
 		}
-
-	
+	}
 
 	public String createImageName(String imageurl, int order) {
 		int lastIndexOf = imageurl.lastIndexOf(".");
