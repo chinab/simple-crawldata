@@ -35,10 +35,10 @@ HsqlDBUtil db;
 	public void run() {
 		try {
 			init(Constants.UpdatePagesDirPath, Constants.UpdateImagesDirPath);
-			ArrayList<DataEntity> pageDatalist = getPageDatalist(Constants.HUOYING_SEED, Constants.DirPath, "seed.html");
-			List<String> newURLList = getNewUrl(pageDatalist);
+			ArrayList<DataEntity> pageDatalist = getPageDatalist(Constants.HUOYING_SEED, Constants.UpdateDirPath, "seed.html");
+			List<DataEntity> newURLList = getNewUrl(pageDatalist);
+			insertNewURL(newURLList);
 			
-			System.out.println(newURLList.size());
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -132,16 +132,16 @@ HsqlDBUtil db;
 	 * @param datalist
 	 * @throws SQLException
 	 */
-	public List<String> getNewUrl(ArrayList<DataEntity> datalist) throws SQLException {
+	public List<DataEntity> getNewUrl(ArrayList<DataEntity> datalist) throws SQLException {
 		
-		List<String> al = new ArrayList<String>();
+		List<DataEntity> al = new ArrayList<DataEntity>();
 		
 		for (int i = 0; i < datalist.size(); i++) {
 			DataEntity entity = datalist.get(i);
 			String sql = "SELECT count(*) FROM mmk_huoying_url where url = '"+entity.getUrl()+"'";
 			String[][] queryFromPool = db.queryFromPool(sql);
 			if (Integer.valueOf(queryFromPool[0][0]) == 0) {
-				al.add(entity.getUrl());
+				al.add(entity);
 			}
 		}
 		
@@ -157,6 +157,31 @@ HsqlDBUtil db;
 		}
 		
 		return null;
+	}
+	
+	public void insertNewURL(List<DataEntity> datalist) throws SQLException {
+		
+		
+		
+		for (int i =0; i < datalist.size(); i++) {
+			
+			String[][] maxtemp = db.queryFromPool("SELECT max(id) FROM mmk_huoying_url");
+			int max = Integer.valueOf(maxtemp[0][0]) + 1;
+			
+			DataEntity entity = datalist.get(i);
+			String url = entity.getUrl();
+			System.out.println("add:" + url);
+			String reg = "http://manhua.manmankan.com/html/1/(\\d+).asp";
+			Pattern p = Pattern.compile(reg); 
+			Matcher m = p.matcher(url);
+			String val = "0";
+			while (m.find()){  
+		      val = m.group(1);  
+		    } 
+			
+			String sql = "INSERT INTO mmk_huoying_url (id, title, url, rorder) values ("+max+", '"+entity.getTitle()+"','"+entity.getUrl()+"', "+val+")";
+			db.executeUpdate(sql);
+		}
 	}
 
 }

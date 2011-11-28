@@ -1,6 +1,5 @@
 package com.hulefei.crawldata.manmankan.process;
 
-import com.hulefei.crawldata.manmankan.DownloadImageThread;
 import com.hulefei.crawldata.util.HsqlDBUtil;
 
 public class Main {

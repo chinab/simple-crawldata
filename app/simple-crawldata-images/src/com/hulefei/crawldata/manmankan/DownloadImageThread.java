@@ -14,10 +14,12 @@ public class DownloadImageThread implements Runnable {
 	public int endid;
 	public HsqlDBUtil db;
 	public String orderStr;
+	public String imageDirPath;
 
-	public DownloadImageThread(HsqlDBUtil db, String orderStr) {
+	public DownloadImageThread(HsqlDBUtil db, String orderStr, String imageDirPath) {
 		this.db = db;
 		this.orderStr = orderStr;
+		this.imageDirPath = imageDirPath;
 	}
 
 	@Override
@@ -55,7 +57,7 @@ public class DownloadImageThread implements Runnable {
 					String imageForld = id + "_" + title;
 
 					String downloadfile = FileUtil.downloadfile(imgageurl,
-							Constants.ImagesDirPath + imageForld + "/",
+							imageDirPath + imageForld + "/",
 							imageName);
 
 					System.out.println(Thread.currentThread().getName()

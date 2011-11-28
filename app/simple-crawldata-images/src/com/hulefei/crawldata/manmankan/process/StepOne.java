@@ -37,7 +37,7 @@ public class StepOne implements Step{
 	
 	public void run() {
 		try {
-			init(Constants.PagesDirPath, Constants.ImagesDirPath);
+			init(Constants.PagesDirPath, Constants.ImagesDirPath, Constants.UpdateDirPath);
 			ArrayList<DataEntity> pageDatalist = getPageDatalist(Constants.HUOYING_SEED, Constants.DirPath, "seed.html");
 			insertURLDB(pageDatalist);
 		} catch (IOException e) {
@@ -59,9 +59,10 @@ public class StepOne implements Step{
 	 * @param imagesDirPath
 	 * @throws IOException
 	 */
-	public void init(String pageDirPath, String imagesDirPath) throws IOException {
+	public void init(String pageDirPath, String imagesDirPath, String updateDirPath) throws IOException {
 		File pageDir = new File(pageDirPath);//"F:/simple-crawldata/huoying/page/"
 		File imagesDir = new File(imagesDirPath);//"F:/simple-crawldata/huoying/images/"
+		File updateDir = new File(updateDirPath);
 		if (!pageDir.exists()) {
 			boolean b = pageDir.mkdir();
 			if (!b) {
@@ -73,6 +74,13 @@ public class StepOne implements Step{
 			boolean b = imagesDir.mkdir();
 			if (!b) {
 				throw new IOException("create imagesDir failure");
+			}
+		}
+		
+		if (!updateDir.exists()) {
+			boolean b = updateDir.mkdir();
+			if (!b) {
+				throw new IOException("create updateDir failure");
 			}
 		}
 	}
@@ -135,7 +143,7 @@ public class StepOne implements Step{
 	public void insertURLDB(ArrayList<DataEntity> datalist) throws SQLException {
 		
 		db.executeUpdate("DROP TABLE IF EXISTS mmk_huoying_url");
-		db.executeUpdate("CREATE TABLE mmk_huoying_url (id int identity not null primary key ,title varchar(50) not null,url varchar(500) not null , rorder int default 0 not null, unique(url))");
+		db.executeUpdate("CREATE TABLE mmk_huoying_url (id int identity not null primary key ,title varchar(50) not null,url varchar(500) not null , rorder int default 0 not null,tag int default 0 not null, unique(url))");
 		
 		for (int i = 0; i < datalist.size(); i++) {
 			DataEntity entity = datalist.get(i);
