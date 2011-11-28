@@ -1,4 +1,4 @@
-package com.hulefei.crawldata.manmankan;
+package com.hulefei.crawldata.manmankan.core;
 
 public class DataEntity {
 

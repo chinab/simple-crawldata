@@ -14,7 +14,7 @@ import org.htmlparser.tags.LinkTag;
 import org.htmlparser.util.ParserException;
 
 import com.hulefei.crawldata.file.FileUtil;
-import com.hulefei.crawldata.manmankan.DataEntity;
+import com.hulefei.crawldata.manmankan.core.DataEntity;
 import com.hulefei.crawldata.manmankan.process.Constants;
 import com.hulefei.crawldata.parser.NodeListIndexOutOfBoundException;
 import com.hulefei.crawldata.parser.NodeListNotSingleNodeException;
