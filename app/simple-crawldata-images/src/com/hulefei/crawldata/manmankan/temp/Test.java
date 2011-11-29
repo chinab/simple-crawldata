@@ -22,11 +22,12 @@ public class Test {
 		 
 		 for(int i=0;i<fileList.length ;i++) {
 			 String name = fileList[i].getName();
-			 String[][] titlePool = db.queryFromPool("select title from mmk_huoying_info where id = " + name);
-			 String title = titlePool[0][0];
+//			 String[][] titlePool = db.queryFromPool("select title from mmk_huoying_info where id = " + name);
+//			 String title = titlePool[0][0];
+			 String[] split = name.split("_");
 			 
-			 String rename = name + "_" + title;
-			 fileList[i].renameTo(new File("F:/simple-crawldata/huoying/temp/images/" + rename));
+//			 String rename = name + "_" + title;
+			 fileList[i].renameTo(new File("F:/simple-crawldata/huoying/temp/images/" + split[0]));
 			 
 		 }
 //		 
